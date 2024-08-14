@@ -23,7 +23,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
-    'users',  # Assuming you have a custom user model here
+    'users', 
+    'products',
+     'cart', # Assuming you have a custom user model here
 ]
 
 MIDDLEWARE = [

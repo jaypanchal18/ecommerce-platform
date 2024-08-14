@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Product, Category
+import requests
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,4 +10,14 @@ class CategorySerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = '__all__'
+        fields = ['id', 'name', 'description', 'price',  'image','category']
+
+    
+
+    def validate_image(self, image):
+        if not image:
+            raise serializers.ValidationError("Image is required")
+        # Check if the file is actually an image
+        if not image.name.endswith(('.png', '.jpg', '.jpeg')):
+            raise serializers.ValidationError("Unsupported file extension. Please upload a PNG, JPG, or JPEG image.")
+        return image

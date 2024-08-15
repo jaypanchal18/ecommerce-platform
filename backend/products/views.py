@@ -4,10 +4,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .serializers import ProductSerializer, CategorySerializer
+from rest_framework.permissions import AllowAny
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         user = self.request.user

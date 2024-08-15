@@ -5,22 +5,20 @@ import {
   Button,
   Typography,
   Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  CircularProgress,
-  Container,
+  Card,
+  CardContent,
+  CardMedia,
+  IconButton,
   Snackbar,
   Alert,
-  IconButton,
+  CircularProgress,
+  Container
 } from '@mui/material';
 import axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import Navbar from './Navbar';
+import '../static/Auth.css'; // Ensure you import your CSS
 
 function SellerDashboard() {
   // State for product form
@@ -28,7 +26,7 @@ function SellerDashboard() {
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [category, setCategory] = useState('');
-  const [image, setImage] = useState(null); // Changed to handle file
+  const [image, setImage] = useState(null);
   const [editingProductId, setEditingProductId] = useState(null);
   const [productErrors, setProductErrors] = useState({});
 
@@ -38,7 +36,6 @@ function SellerDashboard() {
   const [error, setError] = useState(null);
   const [notification, setNotification] = useState({ message: '', severity: '' });
 
-  // Fetch products from the server
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -67,7 +64,6 @@ function SellerDashboard() {
     fetchProducts();
   }, [fetchProducts]);
 
-  // Handle product submission
   const handleProductSubmit = async (e) => {
     e.preventDefault();
     setProductErrors({});
@@ -83,9 +79,7 @@ function SellerDashboard() {
       return;
     }
 
-    const data = { name, description, price, category };
     const token = localStorage.getItem('access_token');
-
     const formData = new FormData();
     formData.append('name', name);
     formData.append('description', description);
@@ -118,7 +112,7 @@ function SellerDashboard() {
       setDescription('');
       setPrice('');
       setCategory('');
-      setImage(null); // Clear the image
+      setImage(null);
       fetchProducts();
     } catch (error) {
       console.error('Error submitting product:', error);
@@ -126,14 +120,13 @@ function SellerDashboard() {
     }
   };
 
-  // Handle edit and delete actions
   const handleEditProduct = (product) => {
     setEditingProductId(product.id);
     setName(product.name);
     setDescription(product.description);
     setPrice(product.price);
     setCategory(product.category);
-    setImage(null); // Keep this as null to avoid using old image
+    setImage(null);
   };
 
   const handleDeleteProduct = async (productId) => {
@@ -155,77 +148,86 @@ function SellerDashboard() {
     }
   };
 
-  
-
   return (
-    <Container maxWidth="lg" className="product-container">
-      <Typography variant="h4" align="center" gutterBottom>
-        Seller Dashboard - Product Management
-      </Typography>
-
-      <Box className="form-container">
+    <div>
+      <Navbar/>
+    
+    <Container maxWidth={false} disableGutters >
+      
+      <Box sx={{ padding: 2 }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Seller Dashboard - Product Management
+        </Typography>
+   
+      {/* Product Form */}
+      <Box className="product-form-container" >
         <Typography variant="h6" gutterBottom>
           {editingProductId ? 'Edit Product' : 'Add Product'}
         </Typography>
-        <form noValidate autoComplete="off" onSubmit={handleProductSubmit}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Product Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                fullWidth
-                error={!!productErrors.name}
-                helperText={productErrors.name}
-              />
+        <Box className="product-form">
+          <form noValidate autoComplete="off" onSubmit={handleProductSubmit}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  label="Product Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  fullWidth
+                  error={!!productErrors.name}
+                  helperText={productErrors.name}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Price"
+                  type="number"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  fullWidth
+                  error={!!productErrors.price}
+                  helperText={productErrors.price}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  fullWidth
+                  error={!!productErrors.category}
+                  helperText={productErrors.category}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <input
+                  type="file"
+                  onChange={(e) => setImage(e.target.files[0])}
+                  style={{ marginTop: '16px' }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  fullWidth
+                  multiline
+                  rows={4}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Button type="submit" variant="contained" color="primary" fullWidth>
+                  {editingProductId ? 'Update Product' : 'Add Product'}
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Price"
-                type="number"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                fullWidth
-                error={!!productErrors.price}
-                helperText={productErrors.price}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                fullWidth
-                error={!!productErrors.category}
-                helperText={productErrors.category}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <input
-                type="file"
-                onChange={(e) => setImage(e.target.files[0])}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                fullWidth
-                multiline
-                rows={4}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Button type="submit" variant="contained" color="primary" fullWidth>
-                {editingProductId ? 'Update Product' : 'Add Product'}
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
+          </form>
+        </Box>
       </Box>
+      
 
-      <Box mt={4}>
+      {/* Product List */}
+      <Box className="product-list-container">
         <Typography variant="h6" gutterBottom>
           Product List
         </Typography>
@@ -234,52 +236,45 @@ function SellerDashboard() {
         ) : error ? (
           <Typography color="error">{error}</Typography>
         ) : (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Description</TableCell>
-                  <TableCell>Price</TableCell>
-                  <TableCell>Category</TableCell>
-                  <TableCell>Image</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {products.map((product) => (
-                  <TableRow key={product.id}>
-                    <TableCell>{product.name}</TableCell>
-                    <TableCell>{product.description}</TableCell>
-                    <TableCell>{product.price}</TableCell>
-                    <TableCell>{product.category}</TableCell>
-                    <TableCell>
-                      {product.image && (
-                        <img
-                          src={`http://localhost:8000${product.image}`}
-                          alt={product.name}
-                          style={{ width: '100px', height: '100px' }}
-                        />
-                      )}
-                    </TableCell>
-                    <TableCell>
+          <Grid container spacing={4}>
+            {products.map((product) => (
+              <Grid item key={product.id} xs={12} sm={6} md={4}>
+                <Card>
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image={product.image}
+                    alt={product.name}
+                  />
+                  <CardContent>
+                    <Typography variant="h6" component="div">
+                      {product.name}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {product.description}
+                    </Typography>
+                    <Typography variant="body1">
+                      Rs. {product.price}
+                    </Typography>
+                    <Box mt={2} display="flex" justifyContent="flex-end">
                       <IconButton onClick={() => handleEditProduct(product)}>
                         <EditIcon />
                       </IconButton>
                       <IconButton onClick={() => handleDeleteProduct(product.id)}>
                         <DeleteIcon />
                       </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
         )}
       </Box>
+     
 
       <Snackbar
-        open={notification.message !== ''}
+        open={!!notification.message}
         autoHideDuration={6000}
         onClose={() => setNotification({ message: '', severity: '' })}
       >
@@ -287,7 +282,9 @@ function SellerDashboard() {
           {notification.message}
         </Alert>
       </Snackbar>
+      </Box>
     </Container>
+    </div>
   );
 }
 

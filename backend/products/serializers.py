@@ -12,6 +12,12 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ['id', 'name', 'description', 'price',  'image','category']
 
+
+        def get_image_url(self, obj):
+           request = self.context.get('request')
+           image_url = obj.image.url
+           return request.build_absolute_uri(image_url)  # Use this if you need full URL
+
     
 
     def validate_image(self, image):

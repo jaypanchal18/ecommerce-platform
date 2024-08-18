@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +24,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
-    'users',  # Assuming you have a custom user model here
+    'users', 
+    'products',
+     'cart', # Assuming you have a custom user model here
 ]
 
 MIDDLEWARE = [
@@ -96,12 +99,17 @@ DATABASES = {
 }
 
 
+
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React frontend
+    "http://localhost:3000",  # React development server
 ]
 
 # Use the custom user model
 AUTH_USER_MODEL = 'users.CustomUser'
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Password validation
